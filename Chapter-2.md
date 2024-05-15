@@ -60,7 +60,9 @@
     ```
 
 - 复合类型: 引用和指针
-  - 引用 (lvalue reference): 理解为别名, 因此必须初始化。bind with init value, not copying. Strict Type matching.
+  - 引用 (lvalue reference): 理解为别名, 因此必须初始化。bind with init value, not copying. Strict Type matching. Cannot reference to a literal value.
+    - ```int &r = i;```
+    - ```int &r = 42;``` // invalid
   - 指针:
     - pointer v.s. reference: pointer is an object; pointer can be initialized without binding an init value (此时是无效指针, **point to an unknown address, can't be recognized**.).
     - ```int *p = &i;``` p is a pointer to i, store the address of i.
@@ -74,7 +76,7 @@
     - Void pointer: ```void *p = &i;```
       - Can't be dereferenced, need to cast to a specific type. Can be used in function I/O, compare. 不能直接操作所指的对象
 - Const: ```const int bufSize = 512;```
-  - have to be inited, cannot be changed. 但是可以拷贝给其他非const变量
+  - have to be inited, cannot be changed. 但是可以拷贝给其他非const变量. Hence, ```int &a = 10;``` is invalid(you may write ```a = 5;``` which is not allowed). However, ```const int &a = 10;``` is valid, since ```a = 5``` is invalid now.
   - Const variable can be accessed in other files by ```extern const int bufSize;``` otherwise it will be a file-local variable.
   - const 引用：const can references const/non-const, but obviously non-const references can't bind to const objects.
   - *SOME EXPECTION*: when const references non-const, the types don't have to match exactly (as long as cast is possible). reason: compiler will create a temporary variable to store the value of the non-const object, then bind the const reference to the temporary variable.
@@ -104,4 +106,21 @@
     std::cout << "a: " << a << std::endl; // 10
     std::cout << "b: " << b << std::endl; // 10 !!!!!
     std::cout << "c: " << c << std::endl; // 10
+    ```
+
+- Const 指针和常量引用区别不大，注意点: Const pointer cannot change pointer, but can change the object pointer refers to. 下面的例子做了一些区分:
+
+    ```c++
+    int a = 5;
+    const int *ptr = &a;
+    std::cout << *ptr << std::endl;//5
+    std::cout << ptr << std::endl;//0x16b00efb8
+    *ptr = 10; // error
+    ptr = nullptr; // valid
+    a = 10;
+    std::cout << *ptr << std::endl;//10
+    std::cout << ptr << std::endl;//0x16b00efb8
+    int *const ptr2 = &a;
+    *ptr2 = 20; // valid
+    ptr2 = nullptr; // error
     ```

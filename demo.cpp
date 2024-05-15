@@ -4,13 +4,18 @@
 
 int main(){
     int a = 5;
-    const int &b  = a;
-    std::cout << "b: " << b << std::endl;
-    int &c = a;
-    c = 10;
-    std::cout << "a: " << a << std::endl;
-    std::cout << "b: " << b << std::endl;
-    std::cout << "c: " << c << std::endl;
+    const int &aa = 10;
+    int *ptr = &a;
+    std::cout << ptr << std::endl;
+    a = 10;
+    std::cout << ptr << std::endl;
+    ptr = nullptr;
+
+    int *const ptr2 = &a;
+    std::cout << *ptr2 << std::endl;
+    *ptr2 = 15;
+    std::cout << *ptr2 << std::endl;
+    //ptr2 = nullptr; //error
 
     return 0;
 }
