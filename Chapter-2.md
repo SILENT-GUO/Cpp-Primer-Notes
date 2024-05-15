@@ -58,9 +58,50 @@
     std::cout << val << std::endl; // result: 100
     std::cout << sum << std::endl; // result: 55
     ```
+
 - 复合类型: 引用和指针
   - 引用 (lvalue reference): 理解为别名, 因此必须初始化。bind with init value, not copying. Strict Type matching.
-  - 指针: 
+  - 指针:
     - pointer v.s. reference: pointer is an object; pointer can be initialized without binding an init value (此时是无效指针, **point to an unknown address, can't be recognized**.).
     - ```int *p = &i;``` p is a pointer to i, store the address of i.
-    - 
+    - Status:
+      - Point to an object: ```int *p = &i;```
+      - Point to the next address location of an object / Not initialized
+        - find the object of the pointer is not checked, so it's dangerous.
+      - nullptr: ```int *p = nullptr;```
+        - find the object: segmentation fault.
+        - init: ```int *p = nullptr;```, ```int *p = 0;```.
+    - Void pointer: ```void *p = &i;```
+      - Can't be dereferenced, need to cast to a specific type. Can be used in function I/O, compare. 不能直接操作所指的对象
+- Const: ```const int bufSize = 512;```
+  - have to be inited, cannot be changed. 但是可以拷贝给其他非const变量
+  - Const variable can be accessed in other files by ```extern const int bufSize;``` otherwise it will be a file-local variable.
+  - const 引用：const can references const/non-const, but obviously non-const references can't bind to const objects.
+  - *SOME EXPECTION*: when const references non-const, the types don't have to match exactly (as long as cast is possible). reason: compiler will create a temporary variable to store the value of the non-const object, then bind the const reference to the temporary variable.
+
+    ```c++
+    double i = 42;
+    const int &r = i; // valid
+    ```
+
+    to
+
+    ```c++
+    double i = 42;
+    const int temp = i;
+    const int &r = temp;
+    ```
+
+  why normal case is invalid: say we remove const, then r changes, but i doesn't change (temp=i is like a copy operation), which is not allowed.
+  - Another Note: the value referenced by const may be changed.
+
+    ```c++
+    int a = 5;
+    const int &b  = a;
+    std::cout << "b: " << b << std::endl; // 5
+    int &c = a;
+    c = 10;
+    std::cout << "a: " << a << std::endl; // 10
+    std::cout << "b: " << b << std::endl; // 10 !!!!!
+    std::cout << "c: " << c << std::endl; // 10
+    ```
